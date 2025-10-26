@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation Result - Growlytics</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --accent-dark: #2a2a2a;
+            --gold: #ffd700;
+            --gold-dark: #b8860b;
+            --green: #00ff88;
+            --green-dark: #00cc6a;
+            --text-light: #ffffff;
+            --text-gray: #b0b0b0;
+            --text-dark-gray: #808080;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-3: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --box-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            min-height: calc(100vh - 100px);
+            padding: 3rem 0;
+            background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.8) 0%, var(--primary-dark) 100%);
+            position: relative;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--green), var(--gold), var(--green));
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .result-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .crop-name {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3rem;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+            text-transform: capitalize;
+            margin: 1rem 0;
+            text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .crop-image-container {
+            margin: 2rem 0;
+            position: relative;
+            display: inline-block;
+        }
+
+        .crop-image {
+            max-width: 100%;
+            width: 400px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            background: linear-gradient(var(--secondary-dark), var(--secondary-dark)) padding-box,
+                        linear-gradient(135deg, var(--gold), var(--green)) border-box;
+        }
+
+        .crop-image:hover {
+            transform: scale(1.05) rotateY(5deg);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 136, 0.9);
+            color: var(--primary-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* Info Sections */
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .info-card {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .info-card h3 {
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-card p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--primary-dark);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .primary-btn:hover {
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .secondary-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .result-card {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+
+            .crop-name {
+                font-size: 2.2rem;
+            }
+
+            .result-title {
+                font-size: 1.5rem;
+            }
+
+            .crop-image {
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+
+        /* Animation */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: absolute;
+            top: -10px;
+            background: var(--gold);
+            width: 6px;
+            height: 6px;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(odd) {
+            background: var(--green);
+            animation-delay: 0.5s;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-leaf"></i>
+                Growlytics
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="CropRecommendation.html" class="active">CROP</a></li>
+                <li><a href="FertilizerRecommendation.html">FERTILIZER</a></li>
+                <li><a href="PesticideRecommendation.html">PESTICIDE</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Add some confetti particles -->
+        <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="confetti" style="left: 20%; animation-delay: 0.2s;"></div>
+        <div class="confetti" style="left: 30%; animation-delay: 0.4s;"></div>
+        <div class="confetti" style="left: 40%; animation-delay: 0.6s;"></div>
+        <div class="confetti" style="left: 50%; animation-delay: 0.8s;"></div>
+        <div class="confetti" style="left: 60%; animation-delay: 1s;"></div>
+        <div class="confetti" style="left: 70%; animation-delay: 1.2s;"></div>
+        <div class="confetti" style="left: 80%; animation-delay: 1.4s;"></div>
+        <div class="confetti" style="left: 90%; animation-delay: 1.6s;"></div>
+
+        <div class="container">
+            <div class="result-card">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                
+                <h1 class="result-title">
+                    🌱 Perfect Match Found! You should grow
+                </h1>
+                
+                <div class="crop-name">
+                    {{ prediction }}
+                </div>
+                
+                <p style="color: var(--text-gray); margin-bottom: 2rem;">
+                    Based on your soil conditions and environmental factors, this crop is ideal for your farm!
+                </p>
+                
+                <div class="crop-image-container">
+                    <img src="{{ url_for('static', filename=pred) }}" alt="{{ prediction }}" class="crop-image">
+                    <div class="image-overlay">
+                        <i class="fas fa-star"></i>
+                        Recommended
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-card">
+                        <h3>
+                            <i class="fas fa-seedling"></i>
+                            Growing Season
+                        </h3>
+                        <p>This crop typically grows best in specific seasons. Check local agricultural guidelines for optimal planting times in your region.</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>
+                            <i class="fas fa-tint"></i>
+                            Water Requirements
+                        </h3>
+                        <p>Ensure proper irrigation based on rainfall patterns and soil moisture. Monitor water levels regularly for healthy growth.</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>
+                            <i class="fas fa-chart-line"></i>
+                            Expected Yield
+                        </h3>
+                        <p>With proper care and optimal conditions, this crop can provide excellent returns on your investment and effort.</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>
+                            <i class="fas fa-shield-alt"></i>
+                            Care Tips
+                        </h3>
+                        <p>Regular monitoring for pests, proper fertilization, and timely harvesting will ensure maximum productivity.</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="FertilizerRecommendation.html" class="action-btn primary-btn">
+                        <i class="fas fa-flask"></i>
+                        Get Fertilizer Advice
+                    </a>
+                    <a href="PesticideRecommendation.html" class="action-btn secondary-btn">
+                        <i class="fas fa-shield-alt"></i>
+                        Pest Protection
+                    </a>
+                    <a href="CropRecommendation.html" class="action-btn secondary-btn">
+                        <i class="fas fa-redo"></i>
+                        Try Again
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate the crop name
+            const cropName = document.querySelector('.crop-name');
+            setTimeout(() => {
+                cropName.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    cropName.style.transform = 'scale(1)';
+                }, 300);
+            }, 500);
+
+            // Add click effect to image
+            const cropImage = document.querySelector('.crop-image');
+            cropImage.addEventListener('click', function() {
+                this.style.transform = 'scale(1.1) rotate(2deg)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 300);
+            });
+
+            // Navbar scroll effect
+            function handleNavbarScroll() {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.style.background = 'rgba(10, 10, 10, 0.98)';
+                } else {
+                    nav.style.background = 'rgba(10, 10, 10, 0.95)';
+                }
+            }
+
+            window.addEventListener('scroll', handleNavbarScroll);
+
+            // Add stagger animation to info cards
+            const infoCards = document.querySelectorAll('.info-card');
+            infoCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 800 + (index * 150));
+            });
+        });
+    </script>
+</body>
+</html>

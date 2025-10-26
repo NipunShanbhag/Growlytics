@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fertilizer Recommendation Result - Growlytics</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --accent-dark: #2a2a2a;
+            --gold: #ffd700;
+            --gold-dark: #b8860b;
+            --green: #00ff88;
+            --green-dark: #00cc6a;
+            --blue: #4dabf7;
+            --red: #ff6b6b;
+            --text-light: #ffffff;
+            --text-gray: #b0b0b0;
+            --text-dark-gray: #808080;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-3: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --box-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            min-height: calc(100vh - 100px);
+            padding: 3rem 0;
+            background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.8) 0%, var(--primary-dark) 100%);
+            position: relative;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header Section */
+        .result-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .result-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .result-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+            border-radius: 2px;
+        }
+
+        .result-subtitle {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* NPK Analysis Cards */
+        .npk-analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .npk-card {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .npk-card:nth-child(1) { animation-delay: 0.2s; }
+        .npk-card:nth-child(2) { animation-delay: 0.4s; }
+        .npk-card:nth-child(3) { animation-delay: 0.6s; }
+
+        .npk-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .nitrogen-card::before {
+            background: linear-gradient(90deg, #4dabf7, #339af0);
+        }
+
+        .phosphorus-card::before {
+            background: linear-gradient(90deg, #ff6b6b, #fa5252);
+        }
+
+        .potassium-card::before {
+            background: linear-gradient(90deg, #51cf66, #40c057);
+        }
+
+        .npk-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .npk-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .npk-icon {
+            font-size: 2.5rem;
+            padding: 1rem;
+            border-radius: 15px;
+            color: white;
+        }
+
+        .nitrogen-icon {
+            background: linear-gradient(135deg, #4dabf7, #339af0);
+        }
+
+        .phosphorus-icon {
+            background: linear-gradient(135deg, #ff6b6b, #fa5252);
+        }
+
+        .potassium-icon {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+        }
+
+        .npk-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .npk-symbol {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .difference-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nitrogen-value { color: #4dabf7; }
+        .phosphorus-value { color: #ff6b6b; }
+        .potassium-value { color: #51cf66; }
+
+        .recommendation-text {
+            color: var(--text-light);
+            font-size: 1rem;
+            line-height: 1.6;
+            background: rgba(26, 26, 26, 0.5);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .nitrogen-rec { border-left-color: #4dabf7; }
+        .phosphorus-rec { border-left-color: #ff6b6b; }
+        .potassium-rec { border-left-color: #51cf66; }
+
+        /* Summary Section */
+        .summary-section {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out 0.8s both;
+        }
+
+        .summary-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4dabf7, #ff6b6b, #51cf66);
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(26, 26, 26, 0.5);
+            border-radius: 12px;
+        }
+
+        .summary-item i {
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--primary-dark);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .primary-btn:hover {
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .secondary-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .result-title {
+                font-size: 2rem;
+            }
+
+            .npk-analysis {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-leaf"></i>
+                Growlytics
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="CropRecommendation.html">CROP</a></li>
+                <li><a href="FertilizerRecommendation.html" class="active">FERTILIZER</a></li>
+                <li><a href="PesticideRecommendation.html">PESTICIDE</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="result-header">
+                <div class="success-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <h1 class="result-title">Fertilizer Analysis Complete</h1>
+                <p class="result-subtitle">
+                    Here's your personalized fertilizer recommendation based on your soil's NPK analysis
+                </p>
+            </div>
+
+            <!-- NPK Analysis Cards -->
+            <div class="npk-analysis">
+                <!-- Nitrogen Card -->
+                <div class="npk-card nitrogen-card">
+                    <div class="npk-header">
+                        <div class="npk-icon nitrogen-icon">
+                            <i class="fas fa-vial"></i>
+                        </div>
+                        <div>
+                            <div class="npk-title">Nitrogen</div>
+                            <div class="npk-symbol">N - Primary Growth</div>
+                        </div>
+                    </div>
+                    <div class="difference-value nitrogen-value">
+                        Δ {{ diff_n }}
+                    </div>
+                    <div class="recommendation-text nitrogen-rec">
+                        {{ recommendation1 }}
+                    </div>
+                </div>
+
+                <!-- Phosphorus Card -->
+                <div class="npk-card phosphorus-card">
+                    <div class="npk-header">
+                        <div class="npk-icon phosphorus-icon">
+                            <i class="fas fa-atom"></i>
+                        </div>
+                        <div>
+                            <div class="npk-title">Phosphorus</div>
+                            <div class="npk-symbol">P - Root Development</div>
+                        </div>
+                    </div>
+                    <div class="difference-value phosphorus-value">
+                        Δ {{ diff_p }}
+                    </div>
+                    <div class="recommendation-text phosphorus-rec">
+                        {{ recommendation2 }}
+                    </div>
+                </div>
+
+                <!-- Potassium Card -->
+                <div class="npk-card potassium-card">
+                    <div class="npk-header">
+                        <div class="npk-icon potassium-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <div>
+                            <div class="npk-title">Potassium</div>
+                            <div class="npk-symbol">K - Disease Resistance</div>
+                        </div>
+                    </div>
+                    <div class="difference-value potassium-value">
+                        Δ {{ diff_k }}
+                    </div>
+                    <div class="recommendation-text potassium-rec">
+                        {{ recommendation3 }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <h2 class="summary-title">
+                    <i class="fas fa-chart-line"></i>
+                    Key Takeaways
+                </h2>
+                <div class="summary-content">
+                    <div class="summary-item">
+                        <i class="fas fa-seedling"></i>
+                        <div>
+                            <strong>Optimize Growth:</strong>
+                            <div style="color: var(--text-gray); font-size: 0.9rem;">Balance NPK levels for maximum yield</div>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <strong>Application Timing:</strong>
+                            <div style="color: var(--text-gray); font-size: 0.9rem;">Apply fertilizers at optimal growth stages</div>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <strong>Soil Health:</strong>
+                            <div style="color: var(--text-gray); font-size: 0.9rem;">Regular testing ensures long-term fertility</div>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <i class="fas fa-leaf"></i>
+                        <div>
+                            <strong>Sustainable Farming:</strong>
+                            <div style="color: var(--text-gray); font-size: 0.9rem;">Balanced nutrition for healthy crops</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="CropRecommendation.html" class="action-btn primary-btn">
+                    <i class="fas fa-seedling"></i>
+                    Get Crop Recommendation
+                </a>
+                <a href="PesticideRecommendation.html" class="action-btn secondary-btn">
+                    <i class="fas fa-shield-alt"></i>
+                    Pest Protection
+                </a>
+                <a href="FertilizerRecommendation.html" class="action-btn secondary-btn">
+                    <i class="fas fa-redo"></i>
+                    New Analysis
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add interactive hover effects
+            const npkCards = document.querySelectorAll('.npk-card');
+            npkCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Navbar scroll effect
+            function handleNavbarScroll() {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.style.background = 'rgba(10, 10, 10, 0.98)';
+                } else {
+                    nav.style.background = 'rgba(10, 10, 10, 0.95)';
+                }
+            }
+
+            window.addEventListener('scroll', handleNavbarScroll);
+
+            // Add number animation effect
+            const differenceValues = document.querySelectorAll('.difference-value');
+            differenceValues.forEach(value => {
+                const text = value.textContent;
+                value.style.opacity = '0';
+                setTimeout(() => {
+                    value.style.transition = 'opacity 0.6s ease';
+                    value.style.opacity = '1';
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

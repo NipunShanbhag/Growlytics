@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesticide Recommendation Result - Growlytics</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        .buy-now-btn {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .buy-now-btn:hover {
+            background-color: #218838;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --accent-dark: #2a2a2a;
+            --gold: #ffd700;
+            --gold-dark: #b8860b;
+            --green: #00ff88;
+            --green-dark: #00cc6a;
+            --red: #ff6b6b;
+            --orange: #ff9500;
+            --text-light: #ffffff;
+            --text-gray: #b0b0b0;
+            --text-dark-gray: #808080;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-3: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --box-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            min-height: calc(100vh - 100px);
+            padding: 3rem 0;
+            background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.8) 0%, var(--primary-dark) 100%);
+            position: relative;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 149, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header Section */
+        .result-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .alert-icon {
+            font-size: 4rem;
+            color: var(--red);
+            margin-bottom: 1rem;
+            animation: shake 2s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-2px);
+            }
+
+            75% {
+                transform: translateX(2px);
+            }
+        }
+
+        .result-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .pest-name {
+            background: linear-gradient(135deg, var(--red), #fa5252);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3rem;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+            text-transform: capitalize;
+            margin: 1rem 0;
+            text-shadow: 2px 2px 4px rgba(255, 107, 107, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: brightness(1);
+            }
+
+            to {
+                filter: brightness(1.2);
+            }
+        }
+
+        .result-subtitle {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Pest Info Section */
+        .pest-info {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        .pest-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--red), var(--orange));
+        }
+
+        .pest-info h3 {
+            color: var(--gold);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(26, 26, 26, 0.5);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            background: rgba(26, 26, 26, 0.8);
+        }
+
+        .info-item i {
+            font-size: 1.5rem;
+            color: var(--red);
+        }
+
+        /* Products Section */
+        .products-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--orange));
+        }
+
+        .section-title h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .product-card:nth-child(1) {
+            animation-delay: 0.4s;
+        }
+
+        .product-card:nth-child(2) {
+            animation-delay: 0.6s;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .product-image-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(26, 26, 26, 0.5);
+            padding: 1rem;
+        }
+
+        .product-image {
+            width: 100%;
+            max-width: 250px;
+            height: 250px;
+            object-fit: contain;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: white;
+            padding: 0.5rem;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+
+        .recommended-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            color: var(--primary-dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-dose {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .product-description {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        /* Safety Warning */
+        .safety-warning {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            animation: slideInUp 0.8s ease-out 0.8s both;
+        }
+
+        .safety-warning h3 {
+            color: var(--red);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .safety-list {
+            list-style: none;
+            color: var(--text-light);
+        }
+
+        .safety-list li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .safety-list li i {
+            color: var(--red);
+            font-size: 0.8rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .action-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--primary-dark);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .primary-btn:hover {
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .secondary-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .result-title {
+                font-size: 2rem;
+            }
+
+            .pest-name {
+                font-size: 2.2rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-leaf"></i>
+                Growlytics
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="CropRecommendation.html">CROP</a></li>
+                <li><a href="FertilizerRecommendation.html">FERTILIZER</a></li>
+                <li><a href="PesticideRecommendation.html" class="active">PESTICIDE</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="result-header">
+                <div class="alert-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h1 class="result-title">Pest Identified:</h1>
+                <div class="pest-name">Grasshopper</div>
+                <p class="result-subtitle">
+                    Immediate action required to protect your crops from this identified pest
+                </p>
+            </div>
+
+            <!-- Pest Information -->
+            <div class="pest-info">
+                <h3>
+                    <i class="fas fa-bug"></i>
+                    Pest Information
+                </h3>
+                <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                    Grasshoppers are destructive insects that can cause significant damage to crops by feeding on
+                    leaves, stems, and developing grains.
+                </p>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <i class="fas fa-leaf"></i>
+                        <div>
+                            <strong>Damage Type:</strong>
+                            <div style="color: var(--text-gray); font-size: 0.9rem;">Leaf defoliation</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar"></i>
+                        <div>
+                            <strong>Active Season:</strong>
+                            <div style="color: var(--text-gray); font-size: 0.9rem;">Summer months</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-seedling"></i>
+                        <div>
+                            <strong>Affected Crops:</strong>
+                            <div style="color: var(--text-gray); font-size: 0.9rem;">Grains, vegetables</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-chart-line"></i>
+                        <div>
+                            <strong>Damage Level:</strong>
+                            <div style="color: var(--red); font-size: 0.9rem;">High</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="products-section">
+                <div class="section-title">
+                    <h2>
+                        <i class="fas fa-shield-alt"></i>
+                        Recommended Pesticide Products
+                    </h2>
+                </div>
+
+                <div class="products-grid">
+                    <!-- Product 1 -->
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <img src="static/img/pesticide/grasshopper/malathion.png" alt="Biostadt Malathion 57 EC"
+                                class="product-image">
+                            <div class="recommended-badge">
+                                <i class="fas fa-star"></i>
+                                Recommended
+                            </div>
+
+                        </div>
+                        <div class="product-name">Biostadt Malathion 57 EC</div>
+                        <div class="product-description">
+                            Broad-spectrum organophosphate insecticide effective against grasshoppers and other chewing
+                            insects.
+                        </div>
+                        <div class="product-dose">
+                            <i class="fas fa-tint"></i>
+                            Dose: 570 gm/L
+                        </div>
+                        <a href="https://agribegri.com/products/buy-pest-control-50-malathion-50-ec-insecticide-online.php#:~:text=684%20(%E2%82%B968.40%20%2F100%20ml)%20FREE%20Delivery!"
+                            target="_blank" class="buy-now-btn">
+                            Buy Now
+                        </a>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <img src="static/img/pesticide/grasshopper/perfek-315-ec.jpg" alt="Perfek 315 EC"
+                                class="product-image">
+                            <div class="recommended-badge">
+                                <i class="fas fa-star"></i>
+                                Recommended
+                            </div>
+                        </div>
+                        <div class="product-name">Perfek 315 EC</div>
+                        <div class="product-description">
+                            Systemic insecticide with contact and stomach action, providing long-lasting protection
+                            against grasshoppers.
+                        </div>
+                        <div class="product-dose">
+                            <i class="fas fa-tint"></i>
+                            Dose: 2.5-3.5 Tbsp/16 L
+                        </div>
+                        <a href="https://www.tradeindia.com/products/perfek-insecticides-3212590.html"
+                            target="_blank" class="buy-now-btn">
+                            Buy Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Warning -->
+            <div class="safety-warning">
+                <h3>
+                    <i class="fas fa-exclamation-circle"></i>
+                    Safety Instructions
+                </h3>
+                <ul class="safety-list">
+                    <li><i class="fas fa-dot-circle"></i>Always wear protective clothing when applying pesticides</li>
+                    <li><i class="fas fa-dot-circle"></i>Apply during early morning or evening hours</li>
+                    <li><i class="fas fa-dot-circle"></i>Follow recommended dosage strictly</li>
+                    <li><i class="fas fa-dot-circle"></i>Keep away from children and pets</li>
+                    <li><i class="fas fa-dot-circle"></i>Observe pre-harvest interval guidelines</li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="CropRecommendation.html" class="action-btn primary-btn">
+                    <i class="fas fa-seedling"></i>
+                    Get Crop Recommendation
+                </a>
+                <a href="FertilizerRecommendation.html" class="action-btn secondary-btn">
+                    <i class="fas fa-flask"></i>
+                    Fertilizer Analysis
+                </a>
+                <a href="PesticideRecommendation.html" class="action-btn secondary-btn">
+                    <i class="fas fa-camera"></i>
+                    Scan Another Pest
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add interactive hover effects
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-15px) scale(1.02)';
+                });
+
+                card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Product image click effect
+            const productImages = document.querySelectorAll('.product-image');
+            productImages.forEach(image => {
+                image.addEventListener('click', function () {
+                    this.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 300);
+                });
+            });
+
+            // Navbar scroll effect
+            function handleNavbarScroll() {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.style.background = 'rgba(10, 10, 10, 0.98)';
+                } else {
+                    nav.style.background = 'rgba(10, 10, 10, 0.95)';
+                }
+            }
+
+            window.addEventListener('scroll', handleNavbarScroll);
+        });
+    </script>
+</body>
+
+</html>

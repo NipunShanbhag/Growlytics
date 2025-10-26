@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesticide Recommendation - Growlytics</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --accent-dark: #2a2a2a;
+            --gold: #ffd700;
+            --gold-dark: #b8860b;
+            --green: #00ff88;
+            --green-dark: #00cc6a;
+            --text-light: #ffffff;
+            --text-gray: #b0b0b0;
+            --text-dark-gray: #808080;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-3: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --box-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.8) 0%, var(--primary-dark) 100%);
+            position: relative;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+            border-radius: 2px;
+        }
+
+        .page-subtitle {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto 1rem;
+        }
+
+        .page-description {
+            color: var(--text-dark-gray);
+            font-size: 0.95rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+        }
+
+        /* File Upload Styling */
+        .upload-section {
+            margin-bottom: 2rem;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .upload-area {
+            width: 100%;
+            min-height: 300px;
+            border: 2px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            background: rgba(26, 26, 26, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: var(--gold);
+            background: rgba(26, 26, 26, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .upload-area.drag-over {
+            border-color: var(--green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .upload-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover .upload-icon {
+            transform: scale(1.1);
+            color: var(--green);
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .browse-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--primary-dark);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Image Preview */
+        .image-preview {
+            display: none;
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .image-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .file-name {
+            color: var(--green);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .remove-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Submit Button */
+        .predict-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--primary-dark);
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .predict-btn.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .predict-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .predict-btn.active:hover::before {
+            left: 100%;
+        }
+
+        .predict-btn.active:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Loading State */
+        .loading .predict-btn {
+            background: var(--text-dark-gray);
+            pointer-events: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .form-container {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .upload-area {
+                min-height: 250px;
+            }
+        }
+
+        /* Animation */
+        .form-container {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideIn 0.8s ease forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Supported formats info */
+        .supported-formats {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .format-tag {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin: 0 0.2rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-leaf"></i>
+                Growlytics
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="CropRecommendation.html">CROP</a></li>
+                <li><a href="FertilizerRecommendation.html">FERTILIZER</a></li>
+                <li><a href="PesticideRecommendation.html" class="active">PESTICIDE</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-shield-alt" style="margin-right: 0.5rem; color: var(--green);"></i>
+                    Pesticide Recommendation
+                </h1>
+                <p class="page-subtitle">
+                    Get recommended pesticide based on pest identification
+                </p>
+                <p class="page-description">
+                    Please upload a clear picture of the pest so we can recommend the appropriate pesticide
+                </p>
+            </div>
+
+            <div class="form-container">
+                <form action="/predict" method="post" enctype="multipart/form-data" id="pesticideForm">
+                    <div class="upload-section">
+                        <div class="file-upload-wrapper">
+                            <div class="upload-area" id="uploadArea">
+                                <div class="upload-content">
+                                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                    <div class="upload-text">Upload Pest Image</div>
+                                    <div class="upload-subtext">Drag and drop your image here</div>
+                                    <button type="button" class="browse-btn" onclick="document.getElementById('imageInput').click()">
+                                        <i class="fas fa-folder-open"></i>
+                                        Browse Files
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <input 
+                                type="file" 
+                                name="image" 
+                                id="imageInput" 
+                                class="file-input"
+                                accept="image/*"
+                                required
+                            >
+                            
+                            <div class="image-preview" id="imagePreview">
+                                <img id="previewImg" class="preview-image" alt="Preview">
+                                <div class="image-info">
+                                    <span class="file-name" id="fileName"></span>
+                                    <button type="button" class="remove-btn" onclick="removeImage()">
+                                        <i class="fas fa-times"></i>
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="supported-formats">
+                            <span style="color: var(--text-gray); font-size: 0.8rem;">Supported formats:</span>
+                            <span class="format-tag">JPG</span>
+                            <span class="format-tag">PNG</span>
+                            <span class="format-tag">GIF</span>
+                            <span class="format-tag">WEBP</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="predict-btn" id="predictBtn">
+                        <i class="fas fa-search"></i>
+                        Identify Pest & Recommend
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const fileName = document.getElementById('fileName');
+        const predictBtn = document.getElementById('predictBtn');
+        const form = document.getElementById('pesticideForm');
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        // File input change
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        // Handle file selection
+        function handleFileSelect(file) {
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    fileName.textContent = file.name;
+                    imagePreview.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                    predictBtn.classList.add('active');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Remove image
+        function removeImage() {
+            imageInput.value = '';
+            imagePreview.style.display = 'none';
+            uploadArea.style.display = 'flex';
+            predictBtn.classList.remove('active');
+        }
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            if (!imageInput.files.length) {
+                e.preventDefault();
+                alert('Please select an image first!');
+                return;
+            }
+
+            // Add loading state
+            form.classList.add('loading');
+            predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Image...';
+            
+            // Call the original showloading function if it exists
+            if (typeof showloading === 'function') {
+                showloading();
+            }
+        });
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        // Navbar scroll effect
+        function handleNavbarScroll() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(10, 10, 10, 0.98)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 10, 0.95)';
+            }
+        }
+
+        window.addEventListener('scroll', handleNavbarScroll);
+    </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floating AI Chatbot</title>
+<style>
+/* Reset default margins/padding */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Floating Chat Button */
+#chatButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    font-size: 28px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Chat Window */
+#chatWindow {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    max-width: 90%;
+    height: 450px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+/* Chat Header */
+#chatHeader {
+    background: #28a745;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Chat Log */
+#chatlog {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background: #f9f9f9;
+}
+
+/* Messages */
+.user { text-align: right; color: #007bff; margin: 5px 0; word-wrap: break-word; }
+.bot { text-align: left; color: #28a745; margin: 5px 0; word-wrap: break-word; }
+
+/* Input Container */
+#inputContainer {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+#userInput {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+#sendButton {
+    padding: 10px 15px;
+    margin-left: 5px;
+    border: none;
+    border-radius: 5px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#sendButton:hover {
+    background: #218838;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    #chatWindow {
+        width: 90%;
+        height: 60vh;
+        bottom: 70px;
+        right: 5%;
+    }
+    #userInput, #sendButton {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating Chat Button -->
+<button id="chatButton">💬</button>
+
+<!-- Chat Window -->
+<div id="chatWindow">
+    <div id="chatHeader">AI Chatbot</div>
+    <div id="chatlog"></div>
+    <div id="inputContainer">
+        <input type="text" id="userInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter'){sendMessage();}">
+        <button id="sendButton" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+const chatButton = document.getElementById('chatButton');
+const chatWindow = document.getElementById('chatWindow');
+const chatHeader = document.getElementById('chatHeader');
+const chatlog = document.getElementById('chatlog');
+const userInput = document.getElementById('userInput');
+
+// Toggle chat window
+chatButton.addEventListener('click', () => {
+    chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+    userInput.focus();
+});
+
+// Optional: close chat when clicking header
+chatHeader.addEventListener('click', () => {
+    chatWindow.style.display = 'none';
+});
+
+// Send message function
+async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    chatlog.innerHTML += `<div class="user">You: ${message}</div>`;
+    chatlog.scrollTop = chatlog.scrollHeight;
+
+    // Call your Flask backend
+    try {
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message})
+        });
+
+        const data = await response.json();
+        chatlog.innerHTML += `<div class="bot">Bot: ${data.reply}</div>`;
+        chatlog.scrollTop = chatlog.scrollHeight;
+    } catch (err) {
+        chatlog.innerHTML += `<div class="bot">Bot: Error connecting to server.</div>`;
+    }
+
+    userInput.value = '';
+}
+</script>
+
+</body>
+</html>

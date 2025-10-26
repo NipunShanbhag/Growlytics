@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation - Growlytics</title>
+    <script src='https://www.noupe.com/embed/0199a832d8997964926b55558c9ad12898d4.js'></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --accent-dark: #2a2a2a;
+            --gold: #ffd700;
+            --gold-dark: #b8860b;
+            --green: #00ff88;
+            --green-dark: #00cc6a;
+            --text-light: #ffffff;
+            --text-gray: #b0b0b0;
+            --text-dark-gray: #808080;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-3: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --box-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.8) 0%, var(--primary-dark) 100%);
+            position: relative;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+            border-radius: 2px;
+        }
+
+        .page-subtitle {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Form Styling */
+        .form-container {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .form-group label i {
+            margin-right: 0.5rem;
+            color: var(--gold);
+            width: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-dark-gray);
+            font-weight: 400;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .predict-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--primary-dark);
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .predict-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .predict-btn:hover::before {
+            left: 100%;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .predict-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Input Icons and Styling */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .form-container {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading .predict-btn {
+            background: var(--text-dark-gray);
+        }
+
+        /* Form Animations */
+        .form-group {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.6s ease forwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(6) { animation-delay: 0.6s; }
+        .form-group:nth-child(7) { animation-delay: 0.7s; }
+        .form-group:nth-child(8) { animation-delay: 0.8s; }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .predict-btn {
+            animation: slideIn 0.6s ease 0.9s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-leaf"></i>
+                Growlytics
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">HOME</a></li>
+                <li><a href="CropRecommendation.html" class="active">CROP</a></li>
+                <li><a href="FertilizerRecommendation.html">FERTILIZER</a></li>
+                <li><a href="PesticideRecommendation.html">PESTICIDE</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-seedling" style="margin-right: 0.5rem; color: var(--green);"></i>
+                    Crop Recommendation
+                </h1>
+                <p class="page-subtitle">
+                    Find out the most suitable crop to grow in your farm based on soil and environmental conditions
+                </p>
+            </div>
+
+            <div class="form-container">
+                <form method="POST" action="/crop_prediction" id="cropForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Nitrogen">
+                                <i class="fas fa-vial"></i>
+                                <strong>Nitrogen (ratio)</strong>
+                            </label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="Nitrogen"
+                                    max="100"
+                                    min="0"
+                                    name="nitrogen"
+                                    placeholder="Enter value (e.g., 50)"
+                                    required
+                                />
+                                <i class="fas fa-percentage input-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Phosphorous">
+                                <i class="fas fa-atom"></i>
+                                <strong>Phosphorous (ratio)</strong>
+                            </label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="Phosphorous"
+                                    max="100"
+                                    min="0"
+                                    name="phosphorous"
+                                    placeholder="Enter value (e.g., 50)"
+                                    required
+                                />
+                                <i class="fas fa-percentage input-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Potassium">
+                                <i class="fas fa-flask"></i>
+                                <strong>Potassium (ratio)</strong>
+                            </label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="Potassium"
+                                    name="potassium"
+                                    max="100"
+                                    min="0"
+                                    placeholder="Enter value (e.g., 50)"
+                                    required
+                                />
+                                <i class="fas fa-percentage input-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ph">
+                                <i class="fas fa-tint"></i>
+                                <strong>pH Level</strong>
+                            </label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="ph"
+                                    name="ph"
+                                    max="14"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="Enter pH value (0-14)"
+                                    required
+                                />
+                                <i class="fas fa-chart-line input-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Rainfall">
+                                <i class="fas fa-cloud-rain"></i>
+                                <strong>Rainfall (mm)</strong>
+                            </label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="Rainfall"
+                                    name="rainfall"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="Enter rainfall in mm"
+                                    required
+                                />
+                                <i class="fas fa-ruler input-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Temperature">
+                                <i class="fas fa-thermometer-half"></i>
+                                <strong>Temperature (°C)</strong>
+                            </label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="Temperature"
+                                    max="100"
+                                    min="0"
+                                    step="0.01"
+                                    name="temperature"
+                                    placeholder="Enter temperature in °C"
+                                    required
+                                />
+                                <i class="fas fa-temperature-high input-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Humidity">
+                            <i class="fas fa-water"></i>
+                            <strong>Relative Humidity (%)</strong>
+                        </label>
+                        <div class="input-wrapper">
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="Humidity"
+                                max="100"
+                                min="0"
+                                step="0.01"
+                                name="humidity"
+                                placeholder="Enter humidity percentage"
+                                required
+                            />
+                            <i class="fas fa-percentage input-icon"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="predict-btn" id="predictBtn">
+                        <i class="fas fa-brain"></i>
+                        Predict Crop
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form submission handling
+        document.getElementById('cropForm').addEventListener('submit', function(e) {
+            const form = this;
+            const btn = document.getElementById('predictBtn');
+            
+            // Add loading state
+            form.classList.add('loading');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        });
+
+        // Input validation and formatting
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.parentElement.style.transform = 'translateY(0)';
+            });
+
+            // Add real-time validation feedback
+            input.addEventListener('input', function() {
+                if (this.validity.valid) {
+                    this.style.borderColor = 'var(--green)';
+                } else {
+                    this.style.borderColor = '#ff6b6b';
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        function handleNavbarScroll() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(10, 10, 10, 0.98)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 10, 0.95)';
+            }
+        }
+
+        window.addEventListener('scroll', handleNavbarScroll);
+    </script>
+</body>
+</html>

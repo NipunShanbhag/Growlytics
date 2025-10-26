@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growlytics - Smart Farming AI</title>
+    <li><a href="index.html" class="active">Home</a></li>
+
+    <script src='https://www.noupe.com/embed/0199a832d8997964926b55558c9ad12898d4.js'></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --accent-dark: #2a2a2a;
+            --gold: #ffd700;
+            --gold-dark: #b8860b;
+            --green: #00ff88;
+            --green-dark: #00cc6a;
+            --text-light: #ffffff;
+            --text-gray: #b0b0b0;
+            --text-dark-gray: #808080;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-3: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --box-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: var(--green);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(26, 26, 26, 0.8) 0%, var(--primary-dark) 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(103, 58, 183, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+
+            50% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            75% {
+                transform: translateY(-5px) rotate(-1deg);
+            }
+        }
+
+        .lights-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            padding-top: 2rem;
+        }
+
+        .light {
+            width: 120px;
+            height: 120px;
+            opacity: 0.7;
+            animation: glow 3s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.5));
+        }
+
+        .light:nth-child(2) {
+            animation-delay: 1s;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+        }
+
+        .light:nth-child(3) {
+            animation-delay: 2s;
+            filter: drop-shadow(0 0 20px rgba(103, 58, 183, 0.5));
+        }
+
+        @keyframes glow {
+            from {
+                transform: translateY(0px) scale(1);
+                opacity: 0.7;
+            }
+
+            to {
+                transform: translateY(-10px) scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            opacity: 0;
+            animation: slideUp 1s ease-out 0.5s forwards;
+        }
+
+        .hero-subtitle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: slideUp 1s ease-out 0.7s forwards;
+        }
+
+        .hero-logo {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--box-shadow);
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-gray);
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: slideUp 1s ease-out 0.9s forwards;
+        }
+
+        .hero-description .highlight {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 0;
+            background: var(--secondary-dark);
+            position: relative;
+        }
+
+        .services::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+            border-radius: 2px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-hover);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .service-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover .service-image {
+            transform: scale(1.05);
+        }
+
+        .service-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .service-title .icon {
+            font-size: 1.8rem;
+            color: var(--gold);
+        }
+
+        .service-description {
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .service-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--primary-dark);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .service-btn:hover::before {
+            left: 100%;
+        }
+
+        .service-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Table/Farm Image Section */
+        .farm-showcase {
+            padding: 3rem 0;
+            background: var(--primary-dark);
+            text-align: center;
+        }
+
+        .farm-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .farm-image:hover {
+            transform: scale(1.02);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+
+        .footer-section h3 {
+            color: var(--gold);
+            margin-bottom: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            color: var(--text-gray);
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li:hover {
+            color: var(--gold);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-dark-gray);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Scroll animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-leaf"></i>
+                Growlytics
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">HOME</a></li>
+                <li><a href="CropRecommendation.html">CROP</a></li>
+                <li><a href="FertilizerRecommendation.html">FERTILIZER</a></li>
+                <li><a href="PesticideRecommendation.html">PESTICIDE</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="lights-container">
+            <div class="light"></div>
+            <div class="light"></div>
+            <div class="light"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome To</h1>
+            <div class="hero-subtitle">
+                <div class="hero-logo">
+                    <i class="fas fa-seedling" style="font-size: 2rem; color: var(--green);"></i>
+                    <span
+                        style="font-size: 2rem; font-weight: 700; color: var(--gold); margin-left: 0.5rem;">Growlytics</span>
+                    <p style="font-size: 0.9rem; color: var(--green); margin: 0;">Smart Farming AI</p>
+                </div>
+            </div>
+            <p class="hero-description">
+                <span class="highlight">Farm = AI + Crop + Fertilizer + Pesticide.</span>
+                We take care of your soil's health. We at <span class="highlight">Growlytics</span>, honor
+                <span class="highlight">the Indian Farmer's love, hard work and character.</span>
+                They help to feed a nation whose population is nearly 1.4 billion.
+                However their productivity is threatened by some natural factors that can ruin their crops and their
+                livelihoods.
+                Growlytics is a small initiative enhancing agriculture, making smart decisions considering
+                the demographics of your field, the factors affecting your crop, as well as how to
+                keep them healthy for a super awesome yield.
+            </p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <div class="section-header scroll-reveal">
+                <h2 class="section-title">Our Services</h2>
+            </div>
+
+            <div class="services-grid">
+                <!-- Crop Recommendation -->
+                <div class="services-grid">
+                    <!-- Crop Recommendation -->
+                    <div class="service-card scroll-reveal">
+                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&h=200&fit=crop"
+                            alt="Green crops in a field representing crop recommendation" class="service-image">
+
+                        <h3 class="service-title">
+                            <i class="fas fa-seedling icon"></i>
+                            Crop Recommendation
+                        </h3>
+
+                        <p class="service-description">
+                            Which crop to grow, ideally suited to your soil and weather?
+                            Make an informed decision before starting cultivation with our AI-powered recommendations.
+                        </p>
+
+                        <!-- Updated button link -->
+                        <a href="CropRecommendation.html" class="service-btn">
+                            Proceed Now
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+
+                <!-- Fertilizer Recommendation -->
+                <div class="service-card scroll-reveal">
+                    <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=200&fit=crop"
+                        alt="Fertilizer Recommendation" class="service-image">
+                    <h3 class="service-title">
+                        <i class="fas fa-flask icon"></i>
+                        Fertilizer Recommendation
+                    </h3>
+                    <p class="service-description">
+                        Which fertilizer to choose for the cultivated soil and prescribed crop for optimum production?
+                        Provide your crops the essential nutrients they need.
+                    </p>
+                    <a href="FertilizerRecommendation.html" class="service-btn">
+                        Proceed Now
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Pesticide Recommendation -->
+                <div class="service-card scroll-reveal">
+                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&h=200&fit=crop"
+                        alt="Pesticide Recommendation" class="service-image">
+                    <h3 class="service-title">
+                        <i class="fas fa-shield-alt icon"></i>
+                        Pesticide Recommendation
+                    </h3>
+                    <p class="service-description">
+                        Pests are a big threat. Use Growlytics to know which pesticide to use to control pests before
+                        they cause potential damage to your crop.
+                    </p>
+                    <a href="PesticideRecommendation.html" class="service-btn">
+                        Proceed Now
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Farm Showcase -->
+    <section class="farm-showcase">
+        <div class="container">
+            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&h=400&fit=crop"
+                alt="Farm Landscape" class="farm-image">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Our Team</h3>
+                    <ul>
+                        <li>Nipun Shanbhag</li>
+                        <li>Lucky Sharma</li>
+                        <li>Atharva Shivade</li>
+                        <li>Aditya Shivalkar</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>| भारताचा शेतकरी, देशाचा अभिमान |</h3>
+                    <p style="color: var(--text-gray); font-style: italic;">Bharat Ke Kisan, Desh Ki Shaan</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Nipun</strong>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/nipun-shanbhag-157aa82b2/"><i
+                                    class="fab fa-linkedin"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-github"></i></a>
+                            <a
+                                href="https://www.instagram.com/shanbhag_nipun?igsh=MWFnY3ZseWtydHFibg%3D%3D&utm_source=qr"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-facebook"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Lucky</strong>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a
+                                href="https://www.instagram.com/shanbhag_nipun?igsh=MWFnY3ZseWtydHFibg%3D%3D&utm_source=qr"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-facebook"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Atharva</strong>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a
+                                href="https://www.instagram.com/shanbhag_nipun?igsh=MWFnY3ZseWtydHFibg%3D%3D&utm_source=qr"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-facebook"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>Aditya</strong>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a
+                                href="https://www.instagram.com/shanbhag_nipun?igsh=MWFnY3ZseWtydHFibg%3D%3D&utm_source=qr"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-facebook"></i></a>
+                            <a href="https://github.com/NipunShanbhag"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 Growlytics Team. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll animations
+        function reveal() {
+            const reveals = document.querySelectorAll('.scroll-reveal');
+
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('revealed');
+                }
+            });
+        }
+
+        // Navbar background on scroll
+        function handleNavbarScroll() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(10, 10, 10, 0.98)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 10, 0.95)';
+            }
+        }
+
+        window.addEventListener('scroll', reveal);
+        window.addEventListener('scroll', handleNavbarScroll);
+
+        // Initial call
+        reveal();
+    </script>
+</body>
+
+</html>
